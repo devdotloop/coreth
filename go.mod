@@ -4,8 +4,8 @@ go 1.23.6
 
 require (
 	github.com/VictoriaMetrics/fastcache v1.12.1
-	github.com/devdotloop/volrex v1.12.3-name-fortuna.0
-	github.com/devdotloop/libevm v0.0.0-20250320152422-7be6bee7ab32
+	github.com/devdotloop/volrex v1.12.3-volrex
+	github.com/devdotloop/libevm v1.0.3-volrex // v0.0.0-20250320152422-7be6bee7ab32
 	github.com/cespare/cp v0.1.0
 	github.com/crate-crypto/go-ipa v0.0.0-20231025140028-3c0104f4b233
 	github.com/davecgh/go-spew v1.1.1
