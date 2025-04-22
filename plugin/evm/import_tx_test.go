@@ -28,7 +28,7 @@ import (
 func createImportTxOptions(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) []*atomic.Tx {
 	utxo := &avax.UTXO{
 		UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
-		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: uint64(50000000),
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -81,7 +81,7 @@ func TestImportTxVerify(t *testing.T) {
 					TxID:        txID,
 					OutputIndex: uint32(0),
 				},
-				Asset: avax.Asset{ID: ctx.AVAXAssetID},
+				Asset: avax.Asset{ID: ctx.VOLREXAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -94,7 +94,7 @@ func TestImportTxVerify(t *testing.T) {
 					TxID:        txID,
 					OutputIndex: uint32(1),
 				},
-				Asset: avax.Asset{ID: ctx.AVAXAssetID},
+				Asset: avax.Asset{ID: ctx.VOLREXAssetID},
 				In: &secp256k1fx.TransferInput{
 					Amt: importAmount,
 					Input: secp256k1fx.Input{
@@ -107,12 +107,12 @@ func TestImportTxVerify(t *testing.T) {
 			{
 				Address: testEthAddrs[0],
 				Amount:  importAmount - ap0.AtomicTxFee,
-				AssetID: ctx.AVAXAssetID,
+				AssetID: ctx.VOLREXAssetID,
 			},
 			{
 				Address: testEthAddrs[1],
 				Amount:  importAmount,
-				AssetID: ctx.AVAXAssetID,
+				AssetID: ctx.VOLREXAssetID,
 			},
 		},
 	}
@@ -430,7 +430,7 @@ func TestNewImportTx(t *testing.T) {
 	// and checks that it has the correct fee for the base fee that has been used
 	createNewImportAVAXTx := func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 		txID := ids.GenerateTestID()
-		_, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, importAmount, testShortIDAddrs[0])
+		_, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, importAmount, testShortIDAddrs[0])
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -441,7 +441,7 @@ func TestNewImportTx(t *testing.T) {
 		}
 		importTx := tx.UnsignedAtomicTx
 		var actualFee uint64
-		actualAVAXBurned, err := importTx.Burned(vm.ctx.AVAXAssetID)
+		actualAVAXBurned, err := importTx.Burned(vm.ctx.VOLREXAssetID)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -475,7 +475,7 @@ func TestNewImportTx(t *testing.T) {
 		}
 
 		tx := txs[0]
-		actualAVAXBurned, err := tx.UnsignedAtomicTx.Burned(vm.ctx.AVAXAssetID)
+		actualAVAXBurned, err := tx.UnsignedAtomicTx.Burned(vm.ctx.VOLREXAssetID)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -880,7 +880,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 						UTXOID: avax.UTXOID{
 							TxID: ids.GenerateTestID(),
 						},
-						Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset: avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -889,7 +889,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -909,7 +909,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 						UTXOID: avax.UTXOID{
 							TxID: ids.GenerateTestID(),
 						},
-						Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset: avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -918,7 +918,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -949,7 +949,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxoID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -958,7 +958,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -983,7 +983,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID}, // Use a different assetID then the actual UTXO
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID}, // Use a different assetID then the actual UTXO
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -992,7 +992,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -1005,7 +1005,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"insufficient AVAX funds": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 				txID := ids.GenerateTestID()
-				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, 1, testShortIDAddrs[0])
+				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, 1, testShortIDAddrs[0])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -1016,7 +1016,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -1025,7 +1025,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  2, // Produce more output than is consumed by the transaction
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -1072,7 +1072,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"no signatures": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 				txID := ids.GenerateTestID()
-				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, 1, testShortIDAddrs[0])
+				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, 1, testShortIDAddrs[0])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -1083,7 +1083,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -1092,7 +1092,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, nil); err != nil {
@@ -1105,7 +1105,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"incorrect signature": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 				txID := ids.GenerateTestID()
-				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, 1, testShortIDAddrs[0])
+				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, 1, testShortIDAddrs[0])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -1116,7 +1116,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -1125,7 +1125,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				// Sign the transaction with the incorrect key
@@ -1139,7 +1139,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 		"non-unique EVM Outputs": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 				txID := ids.GenerateTestID()
-				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, 2, testShortIDAddrs[0])
+				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, 2, testShortIDAddrs[0])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -1150,7 +1150,7 @@ func TestImportTxSemanticVerify(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   2,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -1160,12 +1160,12 @@ func TestImportTxSemanticVerify(t *testing.T) {
 						{
 							Address: testEthAddrs[0],
 							Amount:  1,
-							AssetID: vm.ctx.AVAXAssetID,
+							AssetID: vm.ctx.VOLREXAssetID,
 						},
 						{
 							Address: testEthAddrs[0],
 							Amount:  1,
-							AssetID: vm.ctx.AVAXAssetID,
+							AssetID: vm.ctx.VOLREXAssetID,
 						},
 					},
 				}}
@@ -1192,7 +1192,7 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 		"AVAX UTXO": {
 			setup: func(t *testing.T, vm *VM, sharedMemory *avalancheatomic.Memory) *atomic.Tx {
 				txID := ids.GenerateTestID()
-				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.AVAXAssetID, 1, testShortIDAddrs[0])
+				utxo, err := addUTXO(sharedMemory, vm.ctx, txID, 0, vm.ctx.VOLREXAssetID, 1, testShortIDAddrs[0])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -1203,7 +1203,7 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 					SourceChain:  vm.ctx.XChainID,
 					ImportedInputs: []*avax.TransferableInput{{
 						UTXOID: utxo.UTXOID,
-						Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						In: &secp256k1fx.TransferInput{
 							Amt:   1,
 							Input: secp256k1fx.Input{SigIndices: []uint32{0}},
@@ -1212,7 +1212,7 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 					Outs: []atomic.EVMOutput{{
 						Address: testEthAddrs[0],
 						Amount:  1,
-						AssetID: vm.ctx.AVAXAssetID,
+						AssetID: vm.ctx.VOLREXAssetID,
 					}},
 				}}
 				if err := tx.Sign(atomic.Codec, [][]*secp256k1.PrivateKey{{testKeys[0]}}); err != nil {
@@ -1228,9 +1228,9 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				avaxBalance := sdb.GetBalance(testEthAddrs[0])
-				if avaxBalance.Cmp(atomic.X2CRate) != 0 {
-					t.Fatalf("Expected AVAX balance to be %d, found balance: %d", *atomic.X2CRate, avaxBalance)
+				volrexBalance := sdb.GetBalance(testEthAddrs[0])
+				if volrexBalance.Cmp(atomic.X2CRate) != 0 {
+					t.Fatalf("Expected AVAX balance to be %d, found balance: %d", *atomic.X2CRate, volrexBalance)
 				}
 			},
 		},
@@ -1277,9 +1277,9 @@ func TestImportTxEVMStateTransfer(t *testing.T) {
 				if assetBalance.Cmp(common.Big1) != 0 {
 					t.Fatalf("Expected asset balance to be %d, found balance: %d", common.Big1, assetBalance)
 				}
-				avaxBalance := sdb.GetBalance(testEthAddrs[0])
-				if avaxBalance.Cmp(common.U2560) != 0 {
-					t.Fatalf("Expected AVAX balance to be 0, found balance: %d", avaxBalance)
+				volrexBalance := sdb.GetBalance(testEthAddrs[0])
+				if volrexBalance.Cmp(common.U2560) != 0 {
+					t.Fatalf("Expected AVAX balance to be 0, found balance: %d", volrexBalance)
 				}
 			},
 		},

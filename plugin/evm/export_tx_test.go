@@ -30,7 +30,7 @@ func createExportTxOptions(t *testing.T, vm *VM, issuer chan engCommon.Message, 
 	// Add a UTXO to shared memory
 	utxo := &avax.UTXO{
 		UTXOID: avax.UTXOID{TxID: ids.GenerateTestID()},
-		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 		Out: &secp256k1fx.TransferOutput{
 			Amt: uint64(50000000),
 			OutputOwners: secp256k1fx.OutputOwners{
@@ -92,7 +92,7 @@ func createExportTxOptions(t *testing.T, vm *VM, issuer chan engCommon.Message, 
 		t.Fatal(err)
 	}
 	for _, addr := range testShortIDAddrs {
-		exportTx, err := atomic.NewExportTx(vm.ctx, vm.currentRules(), state, vm.ctx.AVAXAssetID, uint64(5000000), vm.ctx.XChainID, addr, initialBaseFee, []*secp256k1.PrivateKey{testKeys[0]})
+		exportTx, err := atomic.NewExportTx(vm.ctx, vm.currentRules(), state, vm.ctx.VOLREXAssetID, uint64(5000000), vm.ctx.XChainID, addr, initialBaseFee, []*secp256k1.PrivateKey{testKeys[0]})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -107,7 +107,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 	addr := key.Address()
 	ethAddr := key.EthAddress()
 
-	avaxAmount := 50 * units.MilliAvax
+	avaxAmount := 50 * units.MilliVolrex
 	avaxUTXOID := avax.UTXOID{
 		OutputIndex: 0,
 	}
@@ -135,15 +135,15 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 	tests := []struct {
 		name          string
 		tx            []atomic.EVMInput
-		avaxBalance   *uint256.Int
+		volrexBalance *uint256.Int
 		balances      map[ids.ID]*big.Int
 		expectedNonce uint64
 		shouldErr     bool
 	}{
 		{
-			name:        "no transfers",
-			tx:          nil,
-			avaxBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
+			name:          "no transfers",
+			tx:            nil,
+			volrexBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(int64(customAmount)),
 			},
@@ -160,7 +160,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(avaxAmount / 2 * atomic.X2CRateUint64),
+			volrexBalance: uint256.NewInt(avaxAmount / 2 * atomic.X2CRateUint64),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(int64(customAmount)),
 			},
@@ -177,7 +177,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(0),
+			volrexBalance: uint256.NewInt(0),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(int64(customAmount)),
 			},
@@ -194,7 +194,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(0),
+			volrexBalance: uint256.NewInt(0),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(int64(customAmount)),
 			},
@@ -211,7 +211,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
+			volrexBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(int64(customAmount / 2)),
 			},
@@ -228,7 +228,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
+			volrexBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(0),
 			},
@@ -245,7 +245,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
+			volrexBalance: uint256.NewInt(avaxAmount * atomic.X2CRateUint64),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(0),
 			},
@@ -268,7 +268,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   0,
 				},
 			},
-			avaxBalance: uint256.NewInt(0),
+			volrexBalance: uint256.NewInt(0),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(0),
 			},
@@ -291,7 +291,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   1,
 				},
 			},
-			avaxBalance: uint256.NewInt(0),
+			volrexBalance: uint256.NewInt(0),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(0),
 			},
@@ -314,7 +314,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 					Nonce:   1,
 				},
 			},
-			avaxBalance: uint256.NewInt(0),
+			volrexBalance: uint256.NewInt(0),
 			balances: map[ids.ID]*big.Int{
 				customAssetID: big.NewInt(0),
 			},
@@ -333,7 +333,7 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 
 			avaxUTXO := &avax.UTXO{
 				UTXOID: avaxUTXOID,
-				Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+				Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 				Out: &secp256k1fx.TransferOutput{
 					Amt: avaxAmount,
 					OutputOwners: secp256k1fx.OutputOwners{
@@ -421,14 +421,14 @@ func TestExportTxEVMStateTransfer(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			avaxBalance := stateDB.GetBalance(ethAddr)
-			if avaxBalance.Cmp(test.avaxBalance) != 0 {
-				t.Fatalf("address balance %s equal %s not %s", addr.String(), avaxBalance, test.avaxBalance)
+			volrexBalance := stateDB.GetBalance(ethAddr)
+			if volrexBalance.Cmp(test.volrexBalance) != 0 {
+				t.Fatalf("address balance %s equal %s not %s", addr.String(), volrexBalance, test.volrexBalance)
 			}
 
 			for assetID, expectedBalance := range test.balances {
 				balance := stateDB.GetBalanceMultiCoin(ethAddr, common.Hash(assetID))
-				if avaxBalance.Cmp(test.avaxBalance) != 0 {
+				if volrexBalance.Cmp(test.volrexBalance) != 0 {
 					t.Fatalf("%s address balance %s equal %s not %s", assetID, addr.String(), balance, expectedBalance)
 				}
 			}
@@ -456,7 +456,7 @@ func TestExportTxSemanticVerify(t *testing.T) {
 	ethAddr := testEthAddrs[0]
 
 	var (
-		avaxBalance           = 10 * units.Avax
+		volrexBalance         = 10 * units.Volrex
 		custom0Balance uint64 = 100
 		custom0AssetID        = ids.ID{1, 2, 3, 4, 5}
 		custom1Balance uint64 = 1000
@@ -470,8 +470,8 @@ func TestExportTxSemanticVerify(t *testing.T) {
 		Ins: []atomic.EVMInput{
 			{
 				Address: ethAddr,
-				Amount:  avaxBalance,
-				AssetID: vm.ctx.AVAXAssetID,
+				Amount:  volrexBalance,
+				AssetID: vm.ctx.VOLREXAssetID,
 				Nonce:   0,
 			},
 			{
@@ -508,16 +508,16 @@ func TestExportTxSemanticVerify(t *testing.T) {
 		Ins: []atomic.EVMInput{
 			{
 				Address: ethAddr,
-				Amount:  avaxBalance,
-				AssetID: vm.ctx.AVAXAssetID,
+				Amount:  volrexBalance,
+				AssetID: vm.ctx.VOLREXAssetID,
 				Nonce:   0,
 			},
 		},
 		ExportedOutputs: []*avax.TransferableOutput{
 			{
-				Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
+				Asset: avax.Asset{ID: vm.ctx.VOLREXAssetID},
 				Out: &secp256k1fx.TransferOutput{
-					Amt: avaxBalance / 2,
+					Amt: volrexBalance / 2,
 					OutputOwners: secp256k1fx.OutputOwners{
 						Threshold: 1,
 						Addrs:     []ids.ShortID{addr},
@@ -818,9 +818,9 @@ func TestExportTxSemanticVerify(t *testing.T) {
 				validExportTx := *validExportTx
 				validExportTx.ExportedOutputs = []*avax.TransferableOutput{
 					{
-						Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
+						Asset: avax.Asset{ID: vm.ctx.VOLREXAssetID},
 						Out: &secp256k1fx.TransferOutput{
-							Amt: avaxBalance, // after fees this should be too much
+							Amt: volrexBalance, // after fees this should be too much
 							OutputOwners: secp256k1fx.OutputOwners{
 								Threshold: 1,
 								Addrs:     []ids.ShortID{addr},
@@ -953,7 +953,7 @@ func TestExportTxAccept(t *testing.T) {
 	ethAddr := testEthAddrs[0]
 
 	var (
-		avaxBalance           = 10 * units.Avax
+		volrexBalance         = 10 * units.Volrex
 		custom0Balance uint64 = 100
 		custom0AssetID        = ids.ID{1, 2, 3, 4, 5}
 	)
@@ -965,8 +965,8 @@ func TestExportTxAccept(t *testing.T) {
 		Ins: []atomic.EVMInput{
 			{
 				Address: ethAddr,
-				Amount:  avaxBalance,
-				AssetID: vm.ctx.AVAXAssetID,
+				Amount:  volrexBalance,
+				AssetID: vm.ctx.VOLREXAssetID,
 				Nonce:   0,
 			},
 			{
@@ -978,9 +978,9 @@ func TestExportTxAccept(t *testing.T) {
 		},
 		ExportedOutputs: []*avax.TransferableOutput{
 			{
-				Asset: avax.Asset{ID: vm.ctx.AVAXAssetID},
+				Asset: avax.Asset{ID: vm.ctx.VOLREXAssetID},
 				Out: &secp256k1fx.TransferOutput{
-					Amt: avaxBalance,
+					Amt: volrexBalance,
 					OutputOwners: secp256k1fx.OutputOwners{
 						Threshold: 1,
 						Addrs:     []ids.ShortID{addr},
@@ -1071,7 +1071,7 @@ func TestExportTxAccept(t *testing.T) {
 
 	avaxUTXOBytes, err := atomic.Codec.Marshal(atomic.CodecVersion, &avax.UTXO{
 		UTXOID: avaxUTXOID,
-		Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+		Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 		Out:    exportTx.ExportedOutputs[0].Out,
 	})
 	if err != nil {
@@ -1711,7 +1711,7 @@ func TestNewExportTx(t *testing.T) {
 
 			utxo := &avax.UTXO{
 				UTXOID: utxoID,
-				Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+				Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 				Out: &secp256k1fx.TransferOutput{
 					Amt: importAmount,
 					OutputOwners: secp256k1fx.OutputOwners{
@@ -1773,7 +1773,7 @@ func TestNewExportTx(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			tx, err = atomic.NewExportTx(vm.ctx, test.rules, state, vm.ctx.AVAXAssetID, exportAmount, vm.ctx.XChainID, testShortIDAddrs[0], initialBaseFee, []*secp256k1.PrivateKey{testKeys[0]})
+			tx, err = atomic.NewExportTx(vm.ctx, test.rules, state, vm.ctx.VOLREXAssetID, exportAmount, vm.ctx.XChainID, testShortIDAddrs[0], initialBaseFee, []*secp256k1.PrivateKey{testKeys[0]})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -1793,7 +1793,7 @@ func TestNewExportTx(t *testing.T) {
 				t.Fatal("newExportTx created an invalid transaction", err)
 			}
 
-			burnedAVAX, err := exportTx.Burned(vm.ctx.AVAXAssetID)
+			burnedAVAX, err := exportTx.Burned(vm.ctx.VOLREXAssetID)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -1824,8 +1824,8 @@ func TestNewExportTx(t *testing.T) {
 			}
 
 			addr := testKeys[0].EthAddress()
-			if sdb.GetBalance(addr).Cmp(uint256.NewInt(test.bal*units.Avax)) != 0 {
-				t.Fatalf("address balance %s equal %s not %s", addr.String(), sdb.GetBalance(addr), new(big.Int).SetUint64(test.bal*units.Avax))
+			if sdb.GetBalance(addr).Cmp(uint256.NewInt(test.bal*units.Volrex)) != 0 {
+				t.Fatalf("address balance %s equal %s not %s", addr.String(), sdb.GetBalance(addr), new(big.Int).SetUint64(test.bal*units.Volrex))
 			}
 		})
 	}
@@ -1884,7 +1884,7 @@ func TestNewExportTxMulticoin(t *testing.T) {
 
 			utxo := &avax.UTXO{
 				UTXOID: utxoID,
-				Asset:  avax.Asset{ID: vm.ctx.AVAXAssetID},
+				Asset:  avax.Asset{ID: vm.ctx.VOLREXAssetID},
 				Out: &secp256k1fx.TransferOutput{
 					Amt: importAmount,
 					OutputOwners: secp256k1fx.OutputOwners{
@@ -2024,8 +2024,8 @@ func TestNewExportTxMulticoin(t *testing.T) {
 			}
 
 			addr := testKeys[0].EthAddress()
-			if stdb.GetBalance(addr).Cmp(uint256.NewInt(test.bal*units.Avax)) != 0 {
-				t.Fatalf("address balance %s equal %s not %s", addr.String(), stdb.GetBalance(addr), new(big.Int).SetUint64(test.bal*units.Avax))
+			if stdb.GetBalance(addr).Cmp(uint256.NewInt(test.bal*units.Volrex)) != 0 {
+				t.Fatalf("address balance %s equal %s not %s", addr.String(), stdb.GetBalance(addr), new(big.Int).SetUint64(test.bal*units.Volrex))
 			}
 			if stdb.GetBalanceMultiCoin(addr, common.BytesToHash(tid[:])).Cmp(new(big.Int).SetUint64(test.balmc)) != 0 {
 				t.Fatalf("address balance multicoin %s equal %s not %s", addr.String(), stdb.GetBalanceMultiCoin(addr, common.BytesToHash(tid[:])), new(big.Int).SetUint64(test.balmc))

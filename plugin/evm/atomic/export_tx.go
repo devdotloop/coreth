@@ -105,7 +105,7 @@ func (utx *UnsignedExportTx) Verify(
 		if err := in.Verify(); err != nil {
 			return err
 		}
-		if rules.IsBanff && in.AssetID != ctx.AVAXAssetID {
+		if rules.IsBanff && in.AssetID != ctx.VOLREXAssetID {
 			return ErrExportNonAVAXInputBanff
 		}
 	}
@@ -115,10 +115,10 @@ func (utx *UnsignedExportTx) Verify(
 			return err
 		}
 		assetID := out.AssetID()
-		if assetID != ctx.AVAXAssetID && utx.DestinationChain == constants.PlatformChainID {
+		if assetID != ctx.VOLREXAssetID && utx.DestinationChain == constants.PlatformChainID {
 			return ErrWrongChainID
 		}
-		if rules.IsBanff && assetID != ctx.AVAXAssetID {
+		if rules.IsBanff && assetID != ctx.VOLREXAssetID {
 			return ErrExportNonAVAXOutputBanff
 		}
 	}
@@ -206,10 +206,10 @@ func (utx *UnsignedExportTx) SemanticVerify(
 		if err != nil {
 			return err
 		}
-		fc.Produce(ctx.AVAXAssetID, txFee)
+		fc.Produce(ctx.VOLREXAssetID, txFee)
 	// Apply fees to export transactions before Apricot Phase 3
 	default:
-		fc.Produce(ctx.AVAXAssetID, ap0.AtomicTxFee)
+		fc.Produce(ctx.VOLREXAssetID, ap0.AtomicTxFee)
 	}
 	for _, out := range utx.ExportedOutputs {
 		fc.Produce(out.AssetID(), out.Output().Amount())
@@ -316,7 +316,7 @@ func NewExportTx(
 	)
 
 	// consume non-AVAX
-	if assetID != ctx.AVAXAssetID {
+	if assetID != ctx.VOLREXAssetID {
 		ins, signers, err = GetSpendableFunds(ctx, state, keys, assetID, amount)
 		if err != nil {
 			return nil, fmt.Errorf("couldn't generate tx inputs/signers: %w", err)
@@ -352,7 +352,7 @@ func NewExportTx(
 		if err != nil {
 			return nil, errOverflowExport
 		}
-		avaxIns, avaxSigners, err = GetSpendableFunds(ctx, state, keys, ctx.AVAXAssetID, newAvaxNeeded)
+		avaxIns, avaxSigners, err = GetSpendableFunds(ctx, state, keys, ctx.VOLREXAssetID, newAvaxNeeded)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("couldn't generate tx inputs/signers: %w", err)
@@ -382,7 +382,7 @@ func NewExportTx(
 func (utx *UnsignedExportTx) EVMStateTransfer(ctx *snow.Context, state StateDB) error {
 	addrs := map[[20]byte]uint64{}
 	for _, from := range utx.Ins {
-		if from.AssetID == ctx.AVAXAssetID {
+		if from.AssetID == ctx.VOLREXAssetID {
 			log.Debug("export_tx", "dest", utx.DestinationChain, "addr", from.Address, "amount", from.Amount, "assetID", "AVAX")
 			// We multiply the input amount by x2cRate to convert AVAX back to the appropriate
 			// denomination before export.
@@ -435,7 +435,7 @@ func GetSpendableFunds(
 		}
 		addr := key.EthAddress()
 		var balance uint64
-		if assetID == ctx.AVAXAssetID {
+		if assetID == ctx.VOLREXAssetID {
 			// If the asset is AVAX, we divide by the x2cRate to convert back to the correct
 			// denomination of AVAX that can be exported.
 			balance = new(uint256.Int).Div(state.GetBalance(addr), X2CRate).Uint64()
@@ -547,7 +547,7 @@ func GetSpendableAVAXWithFee(
 		inputs = append(inputs, EVMInput{
 			Address: addr,
 			Amount:  inputAmount,
-			AssetID: ctx.AVAXAssetID,
+			AssetID: ctx.VOLREXAssetID,
 			Nonce:   nonce,
 		})
 		signers = append(signers, []*secp256k1.PrivateKey{key})

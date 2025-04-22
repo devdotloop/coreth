@@ -18,5 +18,5 @@ const (
 	// AtomicTxFee is the amount of AVAX that must be burned by an atomic tx.
 	//
 	// This value was replaced with the Apricot Phase 3 dynamic fee mechanism.
-	AtomicTxFee = units.MilliAvax
+	AtomicTxFee = units.MilliVolrex
 )

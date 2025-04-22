@@ -175,7 +175,7 @@ func TestAtomicTxGossip(t *testing.T) {
 	require := require.New(t)
 	ctx := context.Background()
 	snowCtx := utils.TestSnowContext()
-	snowCtx.AVAXAssetID = ids.GenerateTestID()
+	snowCtx.VOLREXAssetID = ids.GenerateTestID()
 	validatorState := utils.NewTestValidatorState()
 	snowCtx.ValidatorState = validatorState
 	memory := avalancheatomic.NewMemory(memdb.New())
@@ -276,7 +276,7 @@ func TestAtomicTxGossip(t *testing.T) {
 		snowCtx,
 		ids.GenerateTestID(),
 		0,
-		snowCtx.AVAXAssetID,
+		snowCtx.VOLREXAssetID,
 		100_000_000_000,
 		pk.Address(),
 	)
@@ -439,7 +439,7 @@ func TestAtomicTxPushGossipOutbound(t *testing.T) {
 	require := require.New(t)
 	ctx := context.Background()
 	snowCtx := utils.TestSnowContext()
-	snowCtx.AVAXAssetID = ids.GenerateTestID()
+	snowCtx.VOLREXAssetID = ids.GenerateTestID()
 	validatorState := utils.NewTestValidatorState()
 	snowCtx.ValidatorState = validatorState
 	memory := avalancheatomic.NewMemory(memdb.New())
@@ -484,7 +484,7 @@ func TestAtomicTxPushGossipOutbound(t *testing.T) {
 		snowCtx,
 		ids.GenerateTestID(),
 		0,
-		snowCtx.AVAXAssetID,
+		snowCtx.VOLREXAssetID,
 		100_000_000_000,
 		pk.Address(),
 	)
@@ -512,7 +512,7 @@ func TestAtomicTxPushGossipInbound(t *testing.T) {
 	require := require.New(t)
 	ctx := context.Background()
 	snowCtx := utils.TestSnowContext()
-	snowCtx.AVAXAssetID = ids.GenerateTestID()
+	snowCtx.VOLREXAssetID = ids.GenerateTestID()
 	validatorState := utils.NewTestValidatorState()
 	snowCtx.ValidatorState = validatorState
 	memory := avalancheatomic.NewMemory(memdb.New())
@@ -555,7 +555,7 @@ func TestAtomicTxPushGossipInbound(t *testing.T) {
 		snowCtx,
 		ids.GenerateTestID(),
 		0,
-		snowCtx.AVAXAssetID,
+		snowCtx.VOLREXAssetID,
 		100_000_000_000,
 		pk.Address(),
 	)

@@ -278,7 +278,7 @@ func TestVMShutdownWhileSyncing(t *testing.T) {
 func createSyncServerAndClientVMs(t *testing.T, test syncTest, numBlocks int) *syncVMSetup {
 	var (
 		require      = require.New(t)
-		importAmount = 2000000 * units.Avax // 2M avax
+		importAmount = 2000000 * units.Volrex // 2M avax
 		alloc        = map[ids.ShortID]uint64{
 			testShortIDAddrs[0]: importAmount,
 		}
@@ -309,7 +309,7 @@ func createSyncServerAndClientVMs(t *testing.T, test syncTest, numBlocks int) *s
 		case 1:
 			// export some of the imported UTXOs to test exportTx is properly synced
 			exportTx, err = serverVM.newExportTx(
-				serverVM.ctx.AVAXAssetID,
+				serverVM.ctx.VOLREXAssetID,
 				importAmount/2,
 				serverVM.ctx.XChainID,
 				testShortIDAddrs[0],

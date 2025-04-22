@@ -106,7 +106,7 @@ func (utx *UnsignedImportTx) Verify(
 		if err := out.Verify(); err != nil {
 			return fmt.Errorf("EVM Output failed verification: %w", err)
 		}
-		if rules.IsBanff && out.AssetID != ctx.AVAXAssetID {
+		if rules.IsBanff && out.AssetID != ctx.VOLREXAssetID {
 			return ErrImportNonAVAXOutputBanff
 		}
 	}
@@ -115,7 +115,7 @@ func (utx *UnsignedImportTx) Verify(
 		if err := in.Verify(); err != nil {
 			return fmt.Errorf("atomic input failed verification: %w", err)
 		}
-		if rules.IsBanff && in.AssetID() != ctx.AVAXAssetID {
+		if rules.IsBanff && in.AssetID() != ctx.VOLREXAssetID {
 			return ErrImportNonAVAXInputBanff
 		}
 	}
@@ -213,11 +213,11 @@ func (utx *UnsignedImportTx) SemanticVerify(
 		if err != nil {
 			return err
 		}
-		fc.Produce(ctx.AVAXAssetID, txFee)
+		fc.Produce(ctx.VOLREXAssetID, txFee)
 
 	// Apply fees to import transactions as of Apricot Phase 2
 	case rules.IsApricotPhase2:
-		fc.Produce(ctx.AVAXAssetID, ap0.AtomicTxFee)
+		fc.Produce(ctx.VOLREXAssetID, ap0.AtomicTxFee)
 	}
 	for _, out := range utx.Outs {
 		fc.Produce(out.AssetID, out.Amount)
@@ -325,7 +325,7 @@ func NewImportTx(
 		signers = append(signers, utxoSigners)
 	}
 	avax.SortTransferableInputsWithSigners(importedInputs, signers)
-	importedAVAXAmount := importedAmount[ctx.AVAXAssetID]
+	importedAVAXAmount := importedAmount[ctx.VOLREXAssetID]
 
 	outs := make([]EVMOutput, 0, len(importedAmount))
 	// This will create unique outputs (in the context of sorting)
@@ -333,7 +333,7 @@ func NewImportTx(
 	for assetID, amount := range importedAmount {
 		// Skip the AVAX amount since it is included separately to account for
 		// the fee
-		if assetID == ctx.AVAXAssetID || amount == 0 {
+		if assetID == ctx.VOLREXAssetID || amount == 0 {
 			continue
 		}
 		outs = append(outs, EVMOutput{
@@ -392,7 +392,7 @@ func NewImportTx(
 		outs = append(outs, EVMOutput{
 			Address: to,
 			Amount:  importedAVAXAmount - txFeeWithChange,
-			AssetID: ctx.AVAXAssetID,
+			AssetID: ctx.VOLREXAssetID,
 		})
 	}
 
@@ -424,7 +424,7 @@ func NewImportTx(
 // accounts accordingly with the imported EVMOutputs
 func (utx *UnsignedImportTx) EVMStateTransfer(ctx *snow.Context, state StateDB) error {
 	for _, to := range utx.Outs {
-		if to.AssetID == ctx.AVAXAssetID {
+		if to.AssetID == ctx.VOLREXAssetID {
 			log.Debug("import_tx", "src", utx.SourceChain, "addr", to.Address, "amount", to.Amount, "assetID", "AVAX")
 			// If the asset is AVAX, convert the input amount in nAVAX to gWei by
 			// multiplying by the x2c rate.
